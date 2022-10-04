@@ -22,12 +22,10 @@ public class HelloServlet extends HttpServlet {
             String data = myReader.nextLine();
             words.add(data);
         }
-
-        //print html
         PrintWriter out = response.getWriter();
         out.println("<html><body><ol>");
-        String mesaj = request.getParameter("textSpart");
-        String sizeForPerm = request.getParameter("sizeul");
+        String mesaj = request.getParameter("splitText");
+        String sizeForPerm = request.getParameter("size");
         for(int i = 0 ; i <= mesaj.length(); i++ ) {
             out.println("<li>" + mesaj.charAt(i) + "</li>");
 
