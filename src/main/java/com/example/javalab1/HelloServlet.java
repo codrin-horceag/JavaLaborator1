@@ -7,64 +7,94 @@ import javax.servlet.annotation.*;
 
 @WebServlet(name = "helloServlet", value = "/hello-servlet")
 public class HelloServlet extends HttpServlet {
+    private String message;
 
     public void init() {
-        String message = "Hello World!";
+        message = "message";
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-        List<String> words = new ArrayList<>();
+        String letters = request.getParameter("splitText");
+        String size = request.getParameter("size");
+        PrintWriter out = response.getWriter();
 
-        File myObj = new File("C:\\master\\JavaLab1\\src\\test\\fisierJava.txt");
-        Scanner myReader = new Scanner(myObj);
+        List<String> words = new ArrayList<>();
+        File file = new File("C:\\master\\JavaLaborator1\\src\\test\\fisierJava.txt");
+
+        Scanner myReader = new Scanner(file);
         while (myReader.hasNextLine()) {
             String data = myReader.nextLine();
             words.add(data);
         }
-        PrintWriter out = response.getWriter();
-        out.println("<html><body><ol>");
-        String mesaj = request.getParameter("splitText");
-        String sizeForPerm = request.getParameter("size");
-        for(int i = 0 ; i <= mesaj.length(); i++ ) {
-            out.println("<li>" + mesaj.charAt(i) + "</li>");
+        List<String> permutedWords = new ArrayList<>();
 
+        if (Integer.parseInt(size) == 0) {
+            printPermutn(letters, "", permutedWords);
+        } else {
+            permutation(letters,"", Integer.parseInt(size), permutedWords);
         }
-        out.println("</ol></br><ol>");
-        //permutation
-        char[] perm = new char[Integer.parseInt(sizeForPerm)];
-        List<String> wordsPermuted = new ArrayList<>();
-        permutation(perm,0,mesaj,wordsPermuted);
-        List<String> wordsPrint = printValidWords(words,wordsPermuted);
 
-        for(int i =0 ; i <= wordsPrint.size(); i++){
-            out.println("<li>" + wordsPrint.get(i) + "</li>");
+        Set<String> printedWords = printValidWords(words, permutedWords);
+        System.out.println(printedWords.size());
+        out.println("<html><body><ol>");
+        for (int i = 0; i < letters.length(); i++){
+            out.println("<li>" + letters.charAt(i) + "</li>");
+        }
+        out.println("</ol><h1>" + message + "</h1><ol>");
+
+        for (String wordToPrint : printedWords) {
+            out.println("<li>" + wordToPrint + "</li>");
         }
         out.println("</ol></body></html>");
     }
 
-    public void destroy() {
-    }
+    public void destroy() {}
 
-    private void permutation(char[] perm, int pos, String str, List<String> perms) {
-        if (pos == perm.length) {
-            perms.add(new String(perm));
-        } else {
-            for (int i = 0 ; i < str.length() ; i++) {
-                perm[pos] = str.charAt(i);
-                permutation(perm, pos+1, str,perms);
-            }
+    static void permutation(String str, String ans, int size, List<String> perms)
+    {
+        if(ans.length() == size){
+            perms.add(ans);
+        }
+
+        if (str.length() == 0) {
+            return;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            String ros = str.substring(0, i) +
+                    str.substring(i + 1);
+            permutation(ros, ans + ch,size,perms);
         }
     }
 
-    private List<String> printValidWords(List<String> dictionaryWords, List<String> wordsPerms){
-        List<String> wordsToPrint = new ArrayList<>();
+    static void printPermutn(String str, String ans, List<String> perms)
+    {
+        perms.add(ans);
 
-        for(int i = 0 ; i <=wordsPerms.size();i++) {
-            for(int j=0; j<= dictionaryWords.size();j++) {
-                if(wordsPerms.get(i).equals(dictionaryWords.get(j))){
-                    wordsToPrint.add(wordsPerms.get(i));
-                }
+        if (str.length() == 0) {
+            System.out.print(ans + " ");
+            return;
+        }
+
+        for (int i = 0; i < str.length(); i++) {
+
+            char ch = str.charAt(i);
+
+            String ros = str.substring(0, i) +
+                    str.substring(i + 1);
+
+            printPermutn(ros, ans + ch, perms);
+        }
+    }
+
+    private Set<String> printValidWords(List<String> dictionaryWords, List<String> wordsPerms) {
+        Set<String> wordsToPrint = new HashSet<>();
+
+        for(String word: wordsPerms){
+            if(dictionaryWords.contains(word)){
+                wordsToPrint.add(word);
             }
         }
         return wordsToPrint;

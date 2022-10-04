@@ -9,9 +9,9 @@
 </h1>
 <br/>
 <form action = "hello-servlet" method = "GET">
-    First Name: <input type = "text" name = "textSpart">
+    First Name: <input type = "text" name = "splitText">
     <br />
-    Size: <input type = "text" name = "sizeul">
+    Size: <input type = "text" name = "size">
     <input type = "submit" value = "Submit" />
 </form>
 </body>
